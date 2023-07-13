@@ -1,0 +1,17 @@
+{
+  "name": "test-cloud-functions-ts",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "author": "odjhey <odjhey@gmail.com>",
+  "scripts": {
+    "gcp-build": "tsc",
+    "build": "tsc"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.3.0"
+  }
+}
