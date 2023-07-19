@@ -1,6 +1,7 @@
 // Import the Google Cloud client libraries
 import { BigQuery } from '@google-cloud/bigquery'
 import { Storage } from '@google-cloud/storage'
+import { BUCKET_TO_TABLE_CONFIGMAP } from './load-mapping';
 
 /**
  * This sample loads the JSON file at
@@ -13,25 +14,29 @@ export async function loadJSONFromGCSTruncate({ bucketname, filename }: { bucket
     // const bucketName = 'cloud-samples-data';
     // const filename = 'bigquery/us-states/us-states.json';
 
+    const bucketConfig = BUCKET_TO_TABLE_CONFIGMAP[bucketname]
+    if (bucketConfig === undefined) {
+        console.log(`bucket ${bucketname} not found in config map`)
+        return
+    }
+    console.log(`bucket ${bucketname} config found`)
+
+    const config = bucketConfig.loadedFilePatternMatcher(filename)
+    if (!config.found) {
+        console.log(`no config match for file ${filename} found`)
+        return
+    }
+    console.log(`bucket ${bucketname} file ${filename} config found`)
+
     const bigquery = new BigQuery();
     const storage = new Storage();
 
-    const datasetId = "test_from_fn";
-    const tableId = "test_table_states";
+    const datasetId = config.config.datasetId
+    const tableId = config.config.tableId
 
     // Configure the load job. For full list of options, see:
     // https://cloud.google.com/bigquery/docs/reference/rest/v2/Job#JobConfigurationLoad
-    const metadata = {
-        sourceFormat: 'NEWLINE_DELIMITED_JSON',
-        schema: {
-            fields: [
-                { name: 'name', type: 'STRING' },
-                { name: 'post_abbr', type: 'STRING' },
-            ],
-        },
-        // Set the write disposition to overwrite existing table data.
-        writeDisposition: 'WRITE_TRUNCATE',
-    };
+    const metadata = config.config.metadata
 
     // Load data from a Google Cloud Storage file into the table
     const [job] = await bigquery

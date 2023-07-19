@@ -1,5 +1,5 @@
 import { http, cloudEvent, } from '@google-cloud/functions-framework'
-import { createDataset } from './services/load-to-bigquery'
+import { createDataset } from './services/bigquery/test_from_fn/create-dataset'
 import { loadJSONFromGCSTruncate } from './services/bigquery/test_from_fn/load'
 
 http('hello', (req, res) => {
