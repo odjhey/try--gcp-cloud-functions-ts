@@ -1,5 +1,6 @@
 import { http, cloudEvent, } from '@google-cloud/functions-framework'
 import { createDataset } from './services/load-to-bigquery'
+import { loadJSONFromGCSTruncate } from './services/bigquery/test_from_fn/load'
 
 http('hello', (req, res) => {
     res.send('eiiii!')
@@ -21,7 +22,7 @@ http('create-dataset', (req, res) => {
 
 // Register a CloudEvent callback with the Functions Framework that will
 // be triggered by Cloud Storage.
-cloudEvent('helloGCS', cloudEvent => {
+cloudEvent('helloGCS', async cloudEvent => {
     console.log(`Event ID: ${cloudEvent.id}`);
     console.log(`Event Type: ${cloudEvent.type}`);
 
@@ -31,4 +32,7 @@ cloudEvent('helloGCS', cloudEvent => {
     console.log(`Metageneration: ${file.metageneration}`);
     console.log(`Created: ${file.timeCreated}`);
     console.log(`Updated: ${file.updated}`);
+
+    await loadJSONFromGCSTruncate({ bucketname: file.bucket, filename: file.name })
+
 });
