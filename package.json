@@ -12,6 +12,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@google-cloud/bigquery": "^6.2.1",
     "@google-cloud/functions-framework": "^3.3.0"
   }
 }

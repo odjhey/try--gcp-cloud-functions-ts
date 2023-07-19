@@ -1,4 +1,5 @@
 import { http, cloudEvent, } from '@google-cloud/functions-framework'
+import { createDataset } from './services/load-to-bigquery'
 
 http('hello', (req, res) => {
     res.send('eiiii!')
@@ -6,6 +7,16 @@ http('hello', (req, res) => {
 
 http('hello2', (req, res) => {
     res.send('yaharu!')
+})
+
+http('create-dataset', (req, res) => {
+    createDataset().then(() => {
+        console.log()
+        res.send('yay!')
+    }, (reason) => {
+        console.log(reason)
+        res.send('failed!')
+    })
 })
 
 // Register a CloudEvent callback with the Functions Framework that will
